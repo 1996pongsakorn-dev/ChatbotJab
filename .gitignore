@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+
+# Environment variables (contains secrets)
+.env
+.env.local
+.env.*.local
+
+# Google Cloud credentials
+*.json
+!data/toyota-knowledge.json
+
+# Logs
+*.log
+npm-debug.log*
+
+# Build output
+dist/
+build/
+
+# Test output files
+server-out.txt
+test-stderr.txt
+test-stdout.txt
+
+# OS
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/

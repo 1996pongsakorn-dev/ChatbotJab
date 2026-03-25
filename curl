@@ -1,0 +1,15 @@
+curl -X POST http://localhost:8080/chat \
+	-H "Content-Type: application/json" \
+	-d '{
+		"sessionId": "demo-001",
+		"modelKey": "gemini_flash",
+		"message": "งบ 900000 บาท"
+	}'
+
+curl -X POST http://localhost:8080/chat \
+	-H "Content-Type: application/json" \
+	-d '{
+		"sessionId": "demo-001",
+		"modelKey": "claude_haiku",
+		"message": "ใช้ในเมืองและครอบครัว 5 ที่นั่ง"
+	}'

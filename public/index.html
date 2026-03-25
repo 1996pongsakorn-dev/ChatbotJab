@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Toyota Sales Agent Demo</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f5f7fb;
+        --card: #ffffff;
+        --text: #172033;
+        --subtle: #61708a;
+        --line: #d7dfec;
+        --primary: #e21c2a;
+        --primary-ink: #ffffff;
+        --user-bubble: #0f1a2b;
+        --user-ink: #ffffff;
+        --bot-bubble: #eef2f8;
+        --bot-ink: #0f1a2b;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Segoe UI", Arial, sans-serif;
+        background: radial-gradient(circle at top, #ffffff, var(--bg));
+        color: var(--text);
+        display: flex;
+        justify-content: center;
+        padding: 24px 12px;
+      }
+
+      .app {
+        width: 100%;
+        max-width: 860px;
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        box-shadow: 0 14px 36px rgba(14, 26, 48, 0.08);
+        overflow: hidden;
+      }
+
+      .header {
+        padding: 18px 20px;
+        border-bottom: 1px solid var(--line);
+        background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
+      }
+
+      .title {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 700;
+      }
+
+      .subtitle {
+        margin: 6px 0 0;
+        color: var(--subtle);
+        font-size: 13px;
+      }
+
+      .controls {
+        display: grid;
+        grid-template-columns: 1.25fr 1fr;
+        gap: 10px;
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--line);
+        background: #fcfdff;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 12px;
+        color: var(--subtle);
+        font-weight: 600;
+        letter-spacing: 0.2px;
+      }
+
+      input,
+      select,
+      textarea,
+      button {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 10px 12px;
+        font-size: 14px;
+        font-family: inherit;
+      }
+
+      textarea {
+        resize: vertical;
+        min-height: 88px;
+      }
+
+      .chat {
+        height: 360px;
+        overflow-y: auto;
+        padding: 16px 20px;
+        background: #f7f9fc;
+      }
+
+      .message {
+        margin-bottom: 10px;
+        max-width: 85%;
+        line-height: 1.45;
+        padding: 10px 12px;
+        border-radius: 12px;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+
+      .message.user {
+        margin-left: auto;
+        background: var(--user-bubble);
+        color: var(--user-ink);
+      }
+
+      .message.bot {
+        margin-right: auto;
+        background: var(--bot-bubble);
+        color: var(--bot-ink);
+        border: 1px solid #dde4f1;
+      }
+
+      .meta {
+        margin-right: auto;
+        margin-left: 2px;
+        color: var(--subtle);
+        font-size: 12px;
+        margin-top: -4px;
+        margin-bottom: 12px;
+      }
+
+      .composer {
+        padding: 14px 20px 18px;
+        border-top: 1px solid var(--line);
+        background: #ffffff;
+      }
+
+      .actions {
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        gap: 10px;
+        align-items: end;
+      }
+
+      .btn {
+        cursor: pointer;
+        transition: 0.15s ease;
+      }
+
+      .btn:active {
+        transform: translateY(1px);
+      }
+
+      .btn-primary {
+        background: var(--primary);
+        color: var(--primary-ink);
+        border-color: var(--primary);
+        font-weight: 600;
+        min-width: 96px;
+      }
+
+      .btn-ghost {
+        background: #ffffff;
+        color: var(--text);
+        min-width: 86px;
+      }
+
+      @media (max-width: 760px) {
+        .controls {
+          grid-template-columns: 1fr;
+        }
+        .actions {
+          grid-template-columns: 1fr;
+        }
+        .message {
+          max-width: 94%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="app">
+      <header class="header">
+        <h2 class="title">Toyota AI Sales Agent</h2>
+        <p class="subtitle">Demo chatbot สำหรับถามตอบและแนะนำการขายรถยนต์</p>
+      </header>
+
+      <section class="controls">
+        <div>
+          <label for="sessionId">Session ID</label>
+          <input id="sessionId" placeholder="session id" value="demo-user-001" />
+        </div>
+        <div>
+          <label for="modelKey">Model</label>
+          <select id="modelKey">
+            <option value="gemini_flash" selected>Gemini Flash</option>
+            <option value="claude_haiku">Claude Haiku</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="chat" id="log"></section>
+
+      <section class="composer">
+        <label for="message">Message</label>
+        <div class="actions">
+          <textarea id="message" rows="3" placeholder="พิมพ์ข้อความ เช่น งบหนึ่งล้าน ใช้ในเมือง ครอบครัว 5 ที่นั่ง"></textarea>
+          <button id="sendBtn" class="btn btn-primary">Send</button>
+          <button id="clearBtn" class="btn btn-ghost" type="button">Clear</button>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const log = document.getElementById("log");
+      const sendBtn = document.getElementById("sendBtn");
+      const clearBtn = document.getElementById("clearBtn");
+      const messageInput = document.getElementById("message");
+
+      function appendMessage(role, text) {
+        const item = document.createElement("div");
+        item.className = `message ${role}`;
+        item.textContent = text;
+        log.appendChild(item);
+        log.scrollTop = log.scrollHeight;
+      }
+
+      function appendMeta(text) {
+        const item = document.createElement("div");
+        item.className = "meta";
+        item.textContent = text;
+        log.appendChild(item);
+        log.scrollTop = log.scrollHeight;
+      }
+
+      async function sendMessage() {
+        const sessionId = document.getElementById("sessionId").value.trim();
+        const modelKey = document.getElementById("modelKey").value;
+        const message = messageInput.value.trim();
+
+        if (!sessionId || !message) {
+          appendMeta("[Error] กรุณากรอก session id และ message");
+          return;
+        }
+
+        appendMessage("user", message);
+
+        try {
+          const response = await fetch("/chat", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              sessionId,
+              modelKey,
+              message,
+            }),
+          });
+
+          const data = await response.json();
+
+          if (!response.ok || !data.ok) {
+            appendMessage("bot", "เกิดข้อผิดพลาดในการเรียก API");
+            appendMeta("[Error] " + JSON.stringify(data));
+            return;
+          }
+
+          appendMessage("bot", data.reply);
+          appendMeta(
+            "[Meta] stage=" + data.stage + " | leadScore=" + data.leadScore + " | model=" + data.modelKey
+          );
+          messageInput.value = "";
+          messageInput.focus();
+        } catch (error) {
+          appendMeta("[Error] " + error.message);
+        }
+      }
+
+      sendBtn.addEventListener("click", sendMessage);
+
+      messageInput.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" && !event.shiftKey) {
+          event.preventDefault();
+          sendMessage();
+        }
+      });
+
+      clearBtn.addEventListener("click", () => {
+        log.innerHTML = "";
+        messageInput.focus();
+      });
+
+      appendMeta("พร้อมใช้งาน: เลือกโมเดล แล้วเริ่มพิมพ์ข้อความได้เลย");
+    </script>
+  </body>
+</html>
