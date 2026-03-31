@@ -1,3 +1,4 @@
+ HEAD
 # Toyota AI Sales Agent POC
 
 POC สำหรับ AI Sales Agent (ขายรถ Toyota) บน GCP โดยใช้ Orchestrator Flow + Vertex AI และสามารถสลับโมเดลได้จากหน้าบ้าน (`gemini_flash`, `claude_haiku`).
@@ -177,3 +178,6 @@ gcloud run services logs read toyota-sales-agent --region us-central1
 - ต้องตรวจ availability รุ่นใน region ที่ใช้งานจริง
 - ต้องมีสิทธิ์เข้าถึง partner model ในโปรเจกต์
 - ถ้าเรียกไม่ได้ ระบบจะ fallback message กลับมา และควรใช้ `gemini_flash` เป็น default
+
+# ChatbotJab
+ 711725a5b7c37906e3042da6675703bc482af8da
