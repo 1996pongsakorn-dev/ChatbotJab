@@ -223,7 +223,9 @@
       const log = document.getElementById("log");
       const sendBtn = document.getElementById("sendBtn");
       const clearBtn = document.getElementById("clearBtn");
+      const sessionInput = document.getElementById("sessionId");
       const messageInput = document.getElementById("message");
+      let lastSessionId = sessionInput.value.trim();
 
       function appendMessage(role, text) {
         const item = document.createElement("div");
@@ -241,6 +243,15 @@
         log.scrollTop = log.scrollHeight;
       }
 
+      function addLoadingIndicator() {
+        const item = document.createElement("div");
+        item.className = "message bot";
+        item.textContent = "Typing...";
+        log.appendChild(item);
+        log.scrollTop = log.scrollHeight;
+        return item;
+      }
+
       async function sendMessage() {
         const sessionId = document.getElementById("sessionId").value.trim();
         const modelKey = document.getElementById("modelKey").value;
@@ -252,6 +263,9 @@
         }
 
         appendMessage("user", message);
+        messageInput.value = "";
+        messageInput.focus();
+        const loadingItem = addLoadingIndicator();
 
         try {
           const response = await fetch("/chat", {
@@ -268,6 +282,8 @@
 
           const data = await response.json();
 
+          loadingItem.remove();
+
           if (!response.ok || !data.ok) {
             appendMessage("bot", "เกิดข้อผิดพลาดในการเรียก API");
             appendMeta("[Error] " + JSON.stringify(data));
@@ -278,9 +294,8 @@
           appendMeta(
             "[Meta] stage=" + data.stage + " | leadScore=" + data.leadScore + " | model=" + data.modelKey
           );
-          messageInput.value = "";
-          messageInput.focus();
         } catch (error) {
+          loadingItem.remove();
           appendMeta("[Error] " + error.message);
         }
       }
@@ -297,6 +312,14 @@
       clearBtn.addEventListener("click", () => {
         log.innerHTML = "";
         messageInput.focus();
+      });
+
+      sessionInput.addEventListener("input", () => {
+        const nextSessionId = sessionInput.value.trim();
+        if (nextSessionId !== lastSessionId && log.children.length > 0) {
+          log.innerHTML = "";
+        }
+        lastSessionId = nextSessionId;
       });
 
       appendMeta("พร้อมใช้งาน: เลือกโมเดล แล้วเริ่มพิมพ์ข้อความได้เลย");

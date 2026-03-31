@@ -392,6 +392,10 @@ ${stageContext}
     content: reply,
   });
 
+  if (session.messages.length > 40) {
+    session.messages = session.messages.slice(-40);
+  }
+
   session.score = calculateLeadScore(session.lead);
 
   await saveSession(userId, session);
